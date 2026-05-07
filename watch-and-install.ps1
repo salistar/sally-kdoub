@@ -87,15 +87,21 @@ function Install-Apk {
   if (Test-Path $dlDir) { Remove-Item -Recurse -Force $dlDir }
   New-Item -ItemType Directory -Force -Path $dlDir | Out-Null
 
-  # ---- Download avec progress live + retries -------------------------
-  # Resolve full path to gh.exe (Start-Job ne herite pas du PATH user)
+  # ---- Download (foreground, simple, fiable) -------------------------
   $ghCmd = Get-Command gh -ErrorAction SilentlyContinue
   if (-not $ghCmd) {
     Write-Host "  FAIL : gh CLI introuvable. winget install GitHub.cli" -ForegroundColor Red
     return $false
   }
   $ghPath = $ghCmd.Source
-  Write-Host "  Telechargement APK..." -ForegroundColor Gray
+
+  # Detecte le repo
+  $repoSlug = & $ghPath repo view --json nameWithOwner -q .nameWithOwner 2>$null
+  if (-not $repoSlug) {
+    Write-Host "  FAIL : impossible de detecter le repo. Verifier 'git remote -v'" -ForegroundColor Red
+    return $false
+  }
+  Write-Host "  Repo : $repoSlug" -ForegroundColor Gray
 
   $maxRetries = 3
   $apk = $null
@@ -107,90 +113,47 @@ function Install-Apk {
       New-Item -ItemType Directory -Force -Path $dlDir | Out-Null
     }
 
-    # Recupere le token gh + le slug du repo dans le parent (le job a son propre cwd)
-    $ghToken = & $ghPath auth token 2>$null
-    if (-not $ghToken) {
-      Write-Host "  FAIL : gh auth token vide. Lance : gh auth login" -ForegroundColor Red
-      return $false
-    }
-    $repoSlug = & $ghPath repo view --json nameWithOwner -q .nameWithOwner 2>$null
-    if (-not $repoSlug) {
-      Write-Host "  FAIL : impossible de detecter le repo. Verifier 'git remote -v'" -ForegroundColor Red
-      return $false
-    }
-
+    Write-Host "  Telechargement (peut prendre 30-90s)..." -ForegroundColor Gray
     $start = Get-Date
-    $dlJob = Start-Job -ScriptBlock {
-      param($exe, $id, $dir, $token, $slug)
-      $env:GH_TOKEN = $token
-      & $exe run download $id --dir $dir --repo $slug 2>&1
-      return $LASTEXITCODE
-    } -ArgumentList $ghPath, $RunId, $dlDir, $ghToken, $repoSlug
 
-    while ($dlJob.State -eq 'Running') {
-      Start-Sleep -Milliseconds 500
-      $sizeBytes = (Get-ChildItem -Path $dlDir -Recurse -ErrorAction SilentlyContinue |
-                      Measure-Object -Property Length -Sum).Sum
-      $sizeMB = if ($sizeBytes) { $sizeBytes / 1MB } else { 0 }
-      $elapsed = ((Get-Date) - $start).TotalSeconds
-      $line = "    {0,7:N1} MB  -  {1,5:N1}s  -  " -f $sizeMB, $elapsed
-      if ($elapsed -gt 0 -and $sizeMB -gt 0) {
-        $rate = $sizeMB / $elapsed
-        $line += "{0,5:N1} MB/s" -f $rate
-      } else {
-        $line += "..."
-      }
-      Write-Host -NoNewline "`r$line          "
+    # Execution directe en foreground - gh affiche son propre progress
+    & $ghPath run download $RunId --dir $dlDir --repo $repoSlug 2>&1 | ForEach-Object {
+      Write-Host "    $_" -ForegroundColor DarkGray
     }
-    Write-Host ""
+    $exitCode = $LASTEXITCODE
+    $elapsed = ((Get-Date) - $start).TotalSeconds
 
-    $output = Receive-Job $dlJob
-    Remove-Job $dlJob -Force
-
-    # Cherche l'APK pour valider le download
+    # Verifie qu'on a bien recu l'APK
     $apk = Get-ChildItem -Path $dlDir -Filter "app-debug.apk" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
-    if ($apk) { break }  # success
-
-    Write-Host "  Echec tentative $attempt :" -ForegroundColor Yellow
-    $output | Where-Object { $_ -match "error" } | Select-Object -Last 3 | ForEach-Object {
-      Write-Host "    $_" -ForegroundColor Gray
+    if ($apk) {
+      $sz = $apk.Length / 1MB
+      Write-Host ("  OK APK : {0:N2} MB en {1:N1}s" -f $sz, $elapsed) -ForegroundColor Green
+      break
     }
+
+    Write-Host "  Echec tentative $attempt (exit $exitCode, $($elapsed.ToString('N1'))s)" -ForegroundColor Yellow
   }
 
   if (-not $apk) {
     Write-Host "  FAIL : impossible de telecharger apres $maxRetries tentatives" -ForegroundColor Red
-    Show-Toast "Download echoue" "Build #$RunId : reseau ?" "Warning"
+    Show-Toast "Download echoue" "Build #$RunId : reseau ou auth ?" "Warning"
     return $false
   }
-  $sz = $apk.Length / 1MB
-  $totalElapsed = ((Get-Date) - $start).TotalSeconds
-  Write-Host ("  OK APK : {0:N2} MB en {1:N1}s" -f $sz, $totalElapsed) -ForegroundColor Green
 
-  # ---- Install avec progress -----------------------------------------
-  Write-Host "  Installation sur $deviceId..." -ForegroundColor Gray
+  # ---- Install (foreground simple) -----------------------------------
+  Write-Host "  Installation sur $deviceId (10-30s)..." -ForegroundColor Gray
   & adb -s $deviceId uninstall $pkg 2>&1 | Out-Null
 
   $installStart = Get-Date
-  $installJob = Start-Job -ScriptBlock {
-    param($dev, $apkPath)
-    & adb -s $dev install -r $apkPath 2>&1
-  } -ArgumentList $deviceId, $apk.FullName
-
-  while ($installJob.State -eq 'Running') {
-    Start-Sleep -Milliseconds 500
-    $elapsed = ((Get-Date) - $installStart).TotalSeconds
-    Write-Host -NoNewline ("`r    Installation... {0,5:N1}s        " -f $elapsed)
-  }
-  Write-Host ""
-
-  $out = Receive-Job $installJob
-  Remove-Job $installJob -Force
+  $out = & adb -s $deviceId install -r $apk.FullName 2>&1
+  $installElapsed = ((Get-Date) - $installStart).TotalSeconds
 
   if ($out -notmatch "Success") {
     Write-Host "  FAIL install :" -ForegroundColor Red
     $out | ForEach-Object { Write-Host "    $_" -ForegroundColor Gray }
     return $false
   }
+  Write-Host ("  Install OK en {0:N1}s" -f $installElapsed) -ForegroundColor Green
 
   # Lance
   & adb -s $deviceId shell am start -n "$pkg/.MainActivity" 2>&1 | Out-Null
