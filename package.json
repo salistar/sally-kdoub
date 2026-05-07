@@ -16,7 +16,9 @@
     "test": "jest",
     "deploy:phone": "powershell -ExecutionPolicy Bypass -File ./deploy-to-phone.ps1",
     "deploy:phone:fast": "powershell -ExecutionPolicy Bypass -File ./deploy-to-phone.ps1 -SkipBundle",
-    "deploy:phone:clean": "powershell -ExecutionPolicy Bypass -File ./deploy-to-phone.ps1 -Clean"
+    "deploy:phone:clean": "powershell -ExecutionPolicy Bypass -File ./deploy-to-phone.ps1 -Clean",
+    "install:from-github": "powershell -ExecutionPolicy Bypass -File ./install-from-github.ps1",
+    "install:from-github:fast": "powershell -ExecutionPolicy Bypass -File ./install-from-github.ps1 -NoLogcat"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.0",
