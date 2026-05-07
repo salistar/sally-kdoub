@@ -147,8 +147,11 @@ function Install-Apk {
   $installStart = Get-Date
   $out = & adb -s $deviceId install -r $apk.FullName 2>&1
   $installElapsed = ((Get-Date) - $installStart).TotalSeconds
+  $outStr = ($out | Out-String).Trim()
 
-  if ($out -notmatch "Success") {
+  # adb install affiche "Success" sur la derniere ligne quand OK,
+  # ou "Failure [REASON]" sinon. On check la string complete.
+  if ($outStr -notmatch "Success") {
     Write-Host "  FAIL install :" -ForegroundColor Red
     $out | ForEach-Object { Write-Host "    $_" -ForegroundColor Gray }
     return $false
