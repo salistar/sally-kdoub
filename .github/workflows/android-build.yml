@@ -47,7 +47,9 @@ jobs:
           node -e "const f='app.json';const j=JSON.parse(require('fs').readFileSync(f));j.expo.newArchEnabled=false;require('fs').writeFileSync(f,JSON.stringify(j,null,2));"
 
       - name: Expo prebuild
-        run: npx expo prebuild --platform android --clean --non-interactive
+        env:
+          CI: '1'
+        run: npx expo prebuild --platform android --clean
 
       - name: Bundle JS (embedded, no Metro)
         run: |
