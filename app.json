@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "name": "SallyCards Kdoub",
+    "slug": "sallycards-kdoub",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": { "image": "./assets/splash.png", "resizeMode": "contain", "backgroundColor": "#0A1929" },
+    "scheme": "sallycards",
+    "ios": { "bundleIdentifier": "com.sallycards.kdoub", "supportsTablet": true },
+    "android": { "package": "com.sallycards.kdoub", "adaptiveIcon": { "foregroundImage": "./assets/adaptive-icon.png", "backgroundColor": "#0A1929" } },
+    "plugins": ["expo-router", "expo-localization", "expo-font"],
+    "newArchEnabled": true, "extra": { "eas": { "projectId": "sallycards-kdoub" } }
+  }
+}

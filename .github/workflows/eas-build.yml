@@ -1,0 +1,47 @@
+# Build EAS (cloud Expo) — preview + production sur tag
+name: EAS Build
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: 'EAS profile'
+        required: true
+        default: 'preview'
+        type: choice
+        options: [development, preview, production]
+      platform:
+        description: 'Platform'
+        required: true
+        default: 'android'
+        type: choice
+        options: [android, ios, all]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ '{{ secrets.EXPO_TOKEN }}' }}
+
+      - run: npm ci
+
+      - name: EAS Build (${{ '{{ github.event.inputs.profile || "preview" }}' }})
+        run: |
+          eas build \
+            --profile ${{ '{{ github.event.inputs.profile || "preview" }}' }} \
+            --platform ${{ '{{ github.event.inputs.platform || "android" }}' }} \
+            --non-interactive \
+            --no-wait
