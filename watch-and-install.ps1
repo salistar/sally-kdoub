@@ -88,6 +88,13 @@ function Install-Apk {
   New-Item -ItemType Directory -Force -Path $dlDir | Out-Null
 
   # ---- Download avec progress live + retries -------------------------
+  # Resolve full path to gh.exe (Start-Job ne herite pas du PATH user)
+  $ghCmd = Get-Command gh -ErrorAction SilentlyContinue
+  if (-not $ghCmd) {
+    Write-Host "  FAIL : gh CLI introuvable. winget install GitHub.cli" -ForegroundColor Red
+    return $false
+  }
+  $ghPath = $ghCmd.Source
   Write-Host "  Telechargement APK..." -ForegroundColor Gray
 
   $maxRetries = 3
@@ -100,12 +107,25 @@ function Install-Apk {
       New-Item -ItemType Directory -Force -Path $dlDir | Out-Null
     }
 
+    # Recupere le token gh + le slug du repo dans le parent (le job a son propre cwd)
+    $ghToken = & $ghPath auth token 2>$null
+    if (-not $ghToken) {
+      Write-Host "  FAIL : gh auth token vide. Lance : gh auth login" -ForegroundColor Red
+      return $false
+    }
+    $repoSlug = & $ghPath repo view --json nameWithOwner -q .nameWithOwner 2>$null
+    if (-not $repoSlug) {
+      Write-Host "  FAIL : impossible de detecter le repo. Verifier 'git remote -v'" -ForegroundColor Red
+      return $false
+    }
+
     $start = Get-Date
     $dlJob = Start-Job -ScriptBlock {
-      param($id, $dir)
-      & gh run download $id --dir $dir 2>&1
+      param($exe, $id, $dir, $token, $slug)
+      $env:GH_TOKEN = $token
+      & $exe run download $id --dir $dir --repo $slug 2>&1
       return $LASTEXITCODE
-    } -ArgumentList $RunId, $dlDir
+    } -ArgumentList $ghPath, $RunId, $dlDir, $ghToken, $repoSlug
 
     while ($dlJob.State -eq 'Running') {
       Start-Sleep -Milliseconds 500
