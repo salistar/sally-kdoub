@@ -28,7 +28,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
 
       - name: Setup Expo
         uses: expo/expo-github-action@v8
@@ -36,7 +35,7 @@ jobs:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
 
-      - run: npm ci
+      - run: npm install --legacy-peer-deps
 
       - name: EAS Build (${{ github.event.inputs.profile || "preview" }})
         run: |
