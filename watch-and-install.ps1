@@ -87,25 +87,85 @@ function Install-Apk {
   if (Test-Path $dlDir) { Remove-Item -Recurse -Force $dlDir }
   New-Item -ItemType Directory -Force -Path $dlDir | Out-Null
 
+  # ---- Download avec progress live + retries -------------------------
   Write-Host "  Telechargement APK..." -ForegroundColor Gray
-  & gh run download $RunId --dir $dlDir 2>&1 | Out-Null
-  if ($LASTEXITCODE -ne 0) {
-    Write-Host "  FAIL telechargement (run trop ancien ?)" -ForegroundColor Red
-    return $false
+
+  $maxRetries = 3
+  $apk = $null
+  for ($attempt = 1; $attempt -le $maxRetries; $attempt++) {
+    if ($attempt -gt 1) {
+      Write-Host "  Retry $attempt/$maxRetries..." -ForegroundColor Yellow
+      Start-Sleep -Seconds 3
+      Remove-Item -Recurse -Force $dlDir -ErrorAction SilentlyContinue
+      New-Item -ItemType Directory -Force -Path $dlDir | Out-Null
+    }
+
+    $start = Get-Date
+    $dlJob = Start-Job -ScriptBlock {
+      param($id, $dir)
+      & gh run download $id --dir $dir 2>&1
+      return $LASTEXITCODE
+    } -ArgumentList $RunId, $dlDir
+
+    while ($dlJob.State -eq 'Running') {
+      Start-Sleep -Milliseconds 500
+      $sizeBytes = (Get-ChildItem -Path $dlDir -Recurse -ErrorAction SilentlyContinue |
+                      Measure-Object -Property Length -Sum).Sum
+      $sizeMB = if ($sizeBytes) { $sizeBytes / 1MB } else { 0 }
+      $elapsed = ((Get-Date) - $start).TotalSeconds
+      $line = "    {0,7:N1} MB  -  {1,5:N1}s  -  " -f $sizeMB, $elapsed
+      if ($elapsed -gt 0 -and $sizeMB -gt 0) {
+        $rate = $sizeMB / $elapsed
+        $line += "{0,5:N1} MB/s" -f $rate
+      } else {
+        $line += "..."
+      }
+      Write-Host -NoNewline "`r$line          "
+    }
+    Write-Host ""
+
+    $output = Receive-Job $dlJob
+    Remove-Job $dlJob -Force
+
+    # Cherche l'APK pour valider le download
+    $apk = Get-ChildItem -Path $dlDir -Filter "app-debug.apk" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($apk) { break }  # success
+
+    Write-Host "  Echec tentative $attempt :" -ForegroundColor Yellow
+    $output | Where-Object { $_ -match "error" } | Select-Object -Last 3 | ForEach-Object {
+      Write-Host "    $_" -ForegroundColor Gray
+    }
   }
 
-  $apk = Get-ChildItem -Path $dlDir -Filter "app-debug.apk" -Recurse | Select-Object -First 1
   if (-not $apk) {
-    Write-Host "  FAIL : APK introuvable" -ForegroundColor Red
+    Write-Host "  FAIL : impossible de telecharger apres $maxRetries tentatives" -ForegroundColor Red
+    Show-Toast "Download echoue" "Build #$RunId : reseau ?" "Warning"
     return $false
   }
   $sz = $apk.Length / 1MB
-  Write-Host ("  APK : {0:N2} MB" -f $sz) -ForegroundColor Gray
+  $totalElapsed = ((Get-Date) - $start).TotalSeconds
+  Write-Host ("  OK APK : {0:N2} MB en {1:N1}s" -f $sz, $totalElapsed) -ForegroundColor Green
 
-  # Uninstall + install
-  Write-Host "  Installation..." -ForegroundColor Gray
+  # ---- Install avec progress -----------------------------------------
+  Write-Host "  Installation sur $deviceId..." -ForegroundColor Gray
   & adb -s $deviceId uninstall $pkg 2>&1 | Out-Null
-  $out = & adb -s $deviceId install -r $apk.FullName 2>&1
+
+  $installStart = Get-Date
+  $installJob = Start-Job -ScriptBlock {
+    param($dev, $apkPath)
+    & adb -s $dev install -r $apkPath 2>&1
+  } -ArgumentList $deviceId, $apk.FullName
+
+  while ($installJob.State -eq 'Running') {
+    Start-Sleep -Milliseconds 500
+    $elapsed = ((Get-Date) - $installStart).TotalSeconds
+    Write-Host -NoNewline ("`r    Installation... {0,5:N1}s        " -f $elapsed)
+  }
+  Write-Host ""
+
+  $out = Receive-Job $installJob
+  Remove-Job $installJob -Force
+
   if ($out -notmatch "Success") {
     Write-Host "  FAIL install :" -ForegroundColor Red
     $out | ForEach-Object { Write-Host "    $_" -ForegroundColor Gray }
