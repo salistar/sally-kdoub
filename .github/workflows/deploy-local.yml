@@ -1,0 +1,68 @@
+# .github/workflows/deploy-local.yml
+#
+# Pipeline de deploiement LOCAL via self-hosted runner.
+# Necessite un runner self-hosted installe sur le PC qui a le tel branche.
+#
+# Setup runner (une seule fois) :
+#   1. https://github.com/<owner>/<repo>/settings/actions/runners/new
+#   2. Suivre les instructions Windows (Download + Configure + run.cmd)
+#   3. Le runner doit avoir les memes outils que pour deploy-to-phone.ps1 :
+#      Node 20+, Java JDK 17, Android SDK + adb, Git
+#
+# Declencher :
+#   gh workflow run deploy-local.yml
+# OU
+#   onglet Actions de GitHub -> Deploy Local -> Run workflow
+
+name: Deploy Local (USB phone)
+
+on:
+  workflow_dispatch:
+    inputs:
+      skipBundle:
+        description: 'Skip JS bundle (faster rebuild)'
+        type: boolean
+        default: false
+      clean:
+        description: 'Clean android/ before build (slow)'
+        type: boolean
+        default: false
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, windows, sallycards]
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify USB device
+        shell: pwsh
+        run: |
+          $devices = adb devices | Select-String "device$" | Where-Object { $_ -notmatch "List of" }
+          if (-not $devices) { Write-Host "::error::No USB device authorized"; exit 1 }
+          Write-Host "Device: $devices"
+
+      - name: Run deploy pipeline
+        shell: pwsh
+        run: |
+          $args = @()
+          if ('${{ inputs.skipBundle }}' -eq 'true') { $args += '-SkipBundle' }
+          if ('${{ inputs.clean }}' -eq 'true') { $args += '-Clean' }
+          $args += '-NoLogcat'
+          .\deploy-to-phone.ps1 @args
+
+      - name: Capture logcat snapshot (10s)
+        shell: pwsh
+        run: |
+          adb logcat -c
+          $job = Start-Job { adb logcat *:E ReactNativeJS:V }
+          Start-Sleep -Seconds 10
+          Stop-Job $job
+          Receive-Job $job | Out-File -FilePath logcat.log -Encoding UTF8
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: logcat-${{ github.run_id }}
+          path: logcat.log
+          retention-days: 7
