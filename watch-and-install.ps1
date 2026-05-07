@@ -159,13 +159,39 @@ function Install-Apk {
   Write-Host ("  Install OK en {0:N1}s" -f $installElapsed) -ForegroundColor Green
 
   # Lance
+  & adb -s $deviceId logcat -c 2>&1 | Out-Null
   & adb -s $deviceId shell am start -n "$pkg/.MainActivity" 2>&1 | Out-Null
 
   # Cleanup
   Remove-Item -Recurse -Force $dlDir -ErrorAction SilentlyContinue
 
-  Write-Host "  ✓ App installee + lancee sur $deviceId" -ForegroundColor Green
+  Write-Host ""
+  Write-Host "  ===========================================" -ForegroundColor Green
+  Write-Host "  ===  INSTALLATION REUSSIE                ===" -ForegroundColor Green
+  Write-Host "  ===========================================" -ForegroundColor Green
+  Write-Host "  App        : $appName" -ForegroundColor Green
+  Write-Host "  Package    : $pkg" -ForegroundColor Green
+  Write-Host "  Tel        : $deviceId" -ForegroundColor Green
+  Write-Host "  Build      : #$RunId (commit $Sha)" -ForegroundColor Green
+  Write-Host "  ===========================================" -ForegroundColor Green
+  Write-Host ""
   Show-Toast "$appName installee !" "Build #$RunId deploye sur $deviceId"
+
+  # Logs de demarrage de l'app (3 secondes pour voir si crash)
+  Write-Host "  Logs de demarrage (3s) :" -ForegroundColor Cyan
+  $logsStart = Get-Date
+  $logProc = Start-Process -FilePath "adb" -ArgumentList "-s", $deviceId, "logcat", "*:E", "ReactNativeJS:V", "ReactNative:V" -PassThru -NoNewWindow -RedirectStandardOutput "$env:TEMP\adb-logs.txt"
+  Start-Sleep -Seconds 3
+  Stop-Process -Id $logProc.Id -Force -ErrorAction SilentlyContinue
+  if (Test-Path "$env:TEMP\adb-logs.txt") {
+    Get-Content "$env:TEMP\adb-logs.txt" -Tail 30 | ForEach-Object {
+      $color = if ($_ -match "\bE\b") { "Red" } elseif ($_ -match "\bI\b") { "Gray" } else { "DarkGray" }
+      Write-Host "    $_" -ForegroundColor $color
+    }
+    Remove-Item "$env:TEMP\adb-logs.txt" -ErrorAction SilentlyContinue
+  }
+  Write-Host ""
+
   return $true
 }
 
