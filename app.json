@@ -5,11 +5,54 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "splash": { "image": "./assets/splash.png", "resizeMode": "contain", "backgroundColor": "#0A1929" },
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0A1929"
+    },
     "scheme": "sallycards",
-    "ios": { "bundleIdentifier": "com.sallycards.kdoub", "supportsTablet": true },
-    "android": { "package": "com.sallycards.kdoub", "adaptiveIcon": { "foregroundImage": "./assets/adaptive-icon.png", "backgroundColor": "#0A1929" } },
-    "plugins": ["expo-router", "expo-localization", "expo-font"],
-    "newArchEnabled": true, "extra": { "eas": { "projectId": "sallycards-kdoub" } }
+    "ios": {
+      "bundleIdentifier": "com.sallycards.kdoub",
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Kdoub utilise votre position pour la carte des hkim."
+      },
+      "config": {
+        "googleMapsApiKey": "AIzaSyAa1lBSroSXA-Om4mio84-SWAcmzQgYv8w"
+      }
+    },
+    "android": {
+      "package": "com.sallycards.kdoub",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0A1929"
+      },
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyAa1lBSroSXA-Om4mio84-SWAcmzQgYv8w"
+        }
+      }
+    },
+    "plugins": [
+      "expo-router",
+      "expo-localization",
+      "expo-font",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Kdoub utilise votre position pour la carte des hkim."
+        }
+      ]
+    ],
+    "newArchEnabled": true,
+    "extra": {
+      "eas": {
+        "projectId": "sallycards-kdoub"
+      }
+    }
   }
 }

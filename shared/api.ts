@@ -585,3 +585,117 @@ export async function completeGame(result: {
     body: JSON.stringify(result),
   });
 }
+
+// ──────────────────────────────────────────────
+// Hkim (trajectoires) — 10 par user, écran Carte
+// ──────────────────────────────────────────────
+
+export interface HkimGeoPoint {
+  lat: number;
+  lng: number;
+  label: string;
+}
+
+export interface Hkim {
+  _id: string;
+  userId: string;
+  name: string;
+  order: number;
+  start: HkimGeoPoint;
+  end: HkimGeoPoint;
+  distanceMeters: number;
+  /** Polyline encodée (Google) de l'itinéraire routier réel. */
+  routePolyline?: string;
+  maxDate: string;
+  status: 'pending' | 'done';
+  completedAt?: string;
+}
+
+/** Jeu courant → collection Mongo dédiée hkim_<jeu> côté backend. */
+export const HKIM_GAME = 'kdoub';
+
+/** Liste les hkim du user (auto-seed 10 côté backend si vide + coords fournies). */
+export async function getHkims(lat?: number, lng?: number): Promise<Hkim[]> {
+  const q =
+    lat != null && lng != null ? `?lat=${lat}&lng=${lng}` : '';
+  const data = await fetchWithToken(`/hkim/${HKIM_GAME}${q}`, { method: 'GET' });
+  return Array.isArray(data) ? data : [];
+}
+
+/** Régénère 10 hkim autour de (lat,lng). */
+export async function regenerateHkims(lat: number, lng: number): Promise<Hkim[]> {
+  const data = await fetchWithToken(`/hkim/${HKIM_GAME}/generate`, {
+    method: 'POST',
+    body: JSON.stringify({ lat, lng }),
+  });
+  return Array.isArray(data) ? data : [];
+}
+
+/** Marque un hkim comme effectué. */
+export async function completeHkim(id: string): Promise<Hkim> {
+  return fetchWithToken(`/hkim/${HKIM_GAME}/${id}/complete`, { method: 'POST' });
+}
+
+export async function getHkimSummary(): Promise<{
+  total: number;
+  done: number;
+  pending: number;
+  items: Hkim[];
+}> {
+  return fetchWithToken(`/hkim/${HKIM_GAME}/summary`, { method: 'GET' });
+}
+
+export interface HkimComment {
+  username: string;
+  text: string;
+  createdAt: string;
+}
+
+export interface HkimFeedItem {
+  hkimId: string;
+  userId: string;
+  username: string;
+  name: string;
+  from: string;
+  to: string;
+  start?: HkimGeoPoint;
+  end?: HkimGeoPoint;
+  distanceMeters: number;
+  completedAt: string;
+  comments: HkimComment[];
+}
+
+/** Seed 10 hkim "historique" pour le user + autres users (fil). */
+export async function seedHkimHistory(
+  lat: number,
+  lng: number,
+): Promise<{ mine: number; others: number }> {
+  return fetchWithToken(`/hkim/${HKIM_GAME}/seed-history`, {
+    method: 'POST',
+    body: JSON.stringify({ lat, lng }),
+  });
+}
+
+/** Fil d'actualité : hkim effectués par tous les users. */
+export async function getHkimFeed(limit = 30): Promise<HkimFeedItem[]> {
+  const data = await fetchWithToken(`/hkim/${HKIM_GAME}/feed?limit=${limit}`, {
+    method: 'GET',
+  });
+  return Array.isArray(data) ? data : [];
+}
+
+export async function getHkimComments(id: string): Promise<HkimComment[]> {
+  const data = await fetchWithToken(`/hkim/${HKIM_GAME}/${id}/comments`, { method: 'GET' });
+  return Array.isArray(data) ? data : [];
+}
+
+export async function addHkimComment(
+  id: string,
+  text: string,
+): Promise<HkimComment[]> {
+  const data = await fetchWithToken(`/hkim/${HKIM_GAME}/${id}/comments`, {
+    method: 'POST',
+    body: JSON.stringify({ text }),
+  });
+  return Array.isArray(data) ? data : [];
+}

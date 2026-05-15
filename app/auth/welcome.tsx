@@ -33,6 +33,7 @@ const CARD_HERO  = require('../../assets/cards/12O.png');
 
 // Per-slide background pattern (built from local card PNGs).
 import CardsPattern, { CardsPatternVariant } from '../../src/components/CardsPattern';
+import BrandLogo from '../../src/components/BrandLogo';
 import { APP_CONFIG } from '../../src/config/app.config';
 
 const SLIDE_BACKGROUNDS = {
@@ -95,7 +96,9 @@ export default function WelcomeScreen() {
         />
         <SafeAreaView style={s.container}>
           <View style={s.langContainer}>
-            <Text style={s.langHero}>🎴</Text>
+            <View style={{ marginBottom: 14 }}>
+              <BrandLogo size={92} />
+            </View>
             <Text style={s.sallyHeader}>Sally <Text style={{ color: APP_COLOR }}>{APP_CONFIG.name}</Text></Text>
             <Text style={s.langTitle}>{t('chooseLanguage') ?? 'Choose your language'}</Text>
             <View style={s.langButtons}>
@@ -153,7 +156,25 @@ export default function WelcomeScreen() {
           </>
         ) : (
           <>
-            <Text style={s.slideIcon}>{item.icon}</Text>
+            {/* Orbe design pour l'icône (au lieu d'un emoji nu) */}
+            <View style={s.iconOrbWrap}>
+              <View style={s.iconOrbHalo} />
+              <LinearGradient
+                colors={['#C084FC', 'rgba(124,58,237,0.35)', 'transparent']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={s.iconOrbRing}
+              >
+                <LinearGradient
+                  colors={['rgba(255,255,255,0.18)', 'rgba(255,255,255,0.04)']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={s.iconOrbInner}
+                >
+                  <Text style={s.iconOrbEmoji}>{item.icon}</Text>
+                </LinearGradient>
+              </LinearGradient>
+            </View>
             <Text style={[s.slideTitle, { color: APP_COLOR }]}>{t(item.titleKey!)}</Text>
             <Text style={s.slideDesc}>{t(item.descKey!)}</Text>
           </>
@@ -254,6 +275,23 @@ const s = StyleSheet.create({
   sallyText: { fontSize: 38, fontFamily: 'Inter-Black', color: '#fff' },
   appNameText: { fontSize: 38, fontFamily: 'Inter-Black' },
   slideIcon: { fontSize: 84, marginBottom: 24 },
+  iconOrbWrap: { width: 168, height: 168, alignItems: 'center', justifyContent: 'center', marginBottom: 28 },
+  iconOrbHalo: {
+    position: 'absolute', width: 168, height: 168, borderRadius: 84,
+    backgroundColor: 'rgba(192,132,252,0.18)',
+    shadowColor: '#C026D3', shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.9, shadowRadius: 28, elevation: 14,
+  },
+  iconOrbRing: {
+    width: 148, height: 148, borderRadius: 74,
+    alignItems: 'center', justifyContent: 'center', padding: 6,
+  },
+  iconOrbInner: {
+    flex: 1, width: '100%', borderRadius: 68,
+    alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.18)',
+  },
+  iconOrbEmoji: { fontSize: 66 },
   slideTitle: { fontSize: 28, fontFamily: 'Inter-Black', textAlign: 'center', marginBottom: 16 },
   slideDesc: { fontSize: 17, fontFamily: 'Inter-Regular', color: '#D1D5DB', textAlign: 'center', lineHeight: 26 },
   dotsRow: { flexDirection: 'row', justifyContent: 'center', gap: 8, paddingVertical: 24 },
