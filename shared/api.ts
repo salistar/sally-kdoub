@@ -44,6 +44,9 @@ function resolveSocketUrl(): string {
 
 export const SOCKET_URL = resolveSocketUrl();
 
+/** URL live du socket-server — pour les écrans temps réel (parité belote). */
+export function getSocketUrl(): string { return resolveSocketUrl(); }
+
 if (__DEV__) {
   console.log('[api] API →', API_URL);
   console.log('[api] Socket →', SOCKET_URL);
@@ -152,6 +155,28 @@ export async function login(email: string, password: string, options?: { gameTyp
     return data;
   } catch (error) {
     console.error('Login failed:', error);
+    throw error;
+  }
+}
+
+/**
+ * Google Sign-In : envoie l'id_token Google au backend (/auth/google),
+ * qui le verifie via Google tokeninfo et retourne les tokens JWT SallyCards.
+ */
+export async function loginWithGoogle(
+  idToken: string,
+  options?: { gameType?: string }
+) {
+  try {
+    const data = await fetchWithToken('/auth/google', {
+      method: 'POST',
+      body: JSON.stringify({ idToken, gameType: options?.gameType ?? 'kdoub' }),
+    });
+    if (data.accessToken) authToken = data.accessToken;
+    if (data.refreshToken) refreshToken = data.refreshToken;
+    return data;
+  } catch (error) {
+    console.error('Google login failed:', error);
     throw error;
   }
 }

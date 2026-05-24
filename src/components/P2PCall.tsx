@@ -18,7 +18,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, Platform, PermissionsAndroid,
-  ActivityIndicator, Animated,
+  ActivityIndicator, Animated, ScrollView,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -51,6 +51,9 @@ interface Props {
   /** Peers simulés affichés en grille même sans connexion socket effective */
   simulatedPeers?: SimulatedPeer[];
   onClose?: () => void;
+  /** Mode compact : rangée de petites vignettes (moi + les autres) — pour
+   *  l'intégrer dans le plateau de jeu sans masquer la table. */
+  compact?: boolean;
 }
 
 interface Peer {
@@ -71,7 +74,7 @@ async function ensureAudioPermission() {
   } catch { return true; }
 }
 
-export default function P2PCall({ roomCode, displayName, authToken, simulatedPeers = [], onClose }: Props) {
+export default function P2PCall({ roomCode, displayName, authToken, simulatedPeers = [], onClose, compact }: Props) {
   const [camPermission, requestCamPermission] = (useCameraPermissions as any)?.() ?? [null, () => {}];
   const [micOk, setMicOk] = useState(false);
   // Pré-remplir avec les peers simulés → les avatars s'affichent
@@ -189,6 +192,60 @@ export default function P2PCall({ roomCode, displayName, authToken, simulatedPee
 
   const pulseScale = pulseAnim.interpolate({ inputRange: [0, 1], outputRange: [1, 1.08] });
   const pulseOpacity = pulseAnim.interpolate({ inputRange: [0, 1], outputRange: [0.3, 0.7] });
+
+  // ── Mode COMPACT : rangée horizontale de vignettes (moi + les autres) ──
+  if (compact) {
+    return (
+      <View style={styles.compactRoot}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.compactRow}>
+          {/* Ma vignette (caméra native expo-camera) */}
+          <View style={styles.compactTile}>
+            {camOn ? (
+              <CameraView style={StyleSheet.absoluteFill as any} facing="front" mute={!micOn} />
+            ) : (
+              <View style={styles.compactOff}>
+                <Ionicons name="videocam-off" size={22} color="#6B7280" />
+              </View>
+            )}
+            <View style={styles.compactLabel}>
+              <Text style={styles.compactName} numberOfLines={1}>Moi</Text>
+              {!micOn && <Ionicons name="mic-off" size={10} color="#fff" style={{ marginLeft: 3 }} />}
+            </View>
+          </View>
+          {/* Vignettes des AUTRES participants */}
+          {peers.map((p) => (
+            <View key={p.socketId} style={styles.compactTile}>
+              <LinearGradient colors={['#7C3AED', '#EC4899']} style={styles.compactOff}>
+                <Ionicons name="person" size={22} color="#fff" />
+              </LinearGradient>
+              <View style={styles.compactLabel}>
+                <Text style={styles.compactName} numberOfLines={1}>{p.username}</Text>
+              </View>
+            </View>
+          ))}
+          {peers.length === 0 && (
+            <View style={styles.compactWaiting}>
+              <Text style={styles.compactWaitingText}>En attente{'\n'}des autres caméras…</Text>
+            </View>
+          )}
+        </ScrollView>
+        <View style={styles.compactBar}>
+          <Text style={styles.compactStatus} numberOfLines={1}>{status}</Text>
+          <TouchableOpacity onPress={() => setMicOn((v) => !v)} style={[styles.compactCtrl, !micOn && styles.ctrlBtnOff]}>
+            <Ionicons name={micOn ? 'mic' : 'mic-off'} size={16} color="#fff" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setCamOn((v) => !v)} style={[styles.compactCtrl, !camOn && styles.ctrlBtnOff]}>
+            <Ionicons name={camOn ? 'videocam' : 'videocam-off'} size={16} color="#fff" />
+          </TouchableOpacity>
+          {!!onClose && (
+            <TouchableOpacity onPress={onClose} style={styles.compactCtrl}>
+              <Ionicons name="close" size={16} color="#fff" />
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.root}>
@@ -345,4 +402,17 @@ const styles = StyleSheet.create({
     alignItems: 'center', gap: 6,
   },
   errorText: { color: '#FCA5A5', fontSize: 11, textAlign: 'center' },
+
+  // ── Mode compact (intégré au plateau de jeu) ──
+  compactRoot: { backgroundColor: '#0A0A1A', borderRadius: 12, overflow: 'hidden', borderWidth: 1, borderColor: 'rgba(124,58,237,0.5)' },
+  compactRow: { padding: 8, gap: 8, alignItems: 'center' },
+  compactTile: { width: 118, height: 150, borderRadius: 10, overflow: 'hidden', backgroundColor: '#1E1B3A', borderWidth: 1, borderColor: '#7C3AED' },
+  compactOff: { ...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center', backgroundColor: '#1E1B3A' },
+  compactLabel: { position: 'absolute', bottom: 0, left: 0, right: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.6)', paddingVertical: 3 },
+  compactName: { color: '#fff', fontSize: 10, fontFamily: 'Inter-Bold' },
+  compactWaiting: { height: 150, paddingHorizontal: 18, alignItems: 'center', justifyContent: 'center' },
+  compactWaitingText: { color: '#8B8B9E', fontSize: 12, textAlign: 'center' },
+  compactBar: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 10, paddingVertical: 8, borderTopWidth: 1, borderColor: 'rgba(124,58,237,0.4)' },
+  compactStatus: { flex: 1, color: '#fff', fontSize: 11, fontFamily: 'Inter-SemiBold' },
+  compactCtrl: { width: 34, height: 34, borderRadius: 17, backgroundColor: 'rgba(124,58,237,0.9)', alignItems: 'center', justifyContent: 'center' },
 });

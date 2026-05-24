@@ -33,20 +33,16 @@ export default function CreateRoomScreen() {
   const [isPrivate, setIsPrivate] = useState(false);
   const [creating, setCreating] = useState(false);
 
-  const handleCreate = async () => {
+  const handleCreate = () => {
     setCreating(true);
-    try {
-      log.bin('POST /rooms', { gameType: 'kdoub', maxPlayers, isPrivate });
-      const room = await api.createRoomFull('kdoub', { maxPlayers, isPrivate });
-      log.bout('201 /rooms', { code: room.code, mode: room.mode });
-      log.explain(`room ${room.code} créée (${room.mode}, max ${maxPlayers}j) → navigation vers le lobby`);
-      router.replace(`/room/lobby?code=${room.code}`);
-    } catch (e: any) {
-      log.error('createRoom failed', e?.message);
-      Alert.alert(t('error'), e?.message || t('cantCreateRoom'));
-    } finally {
-      setCreating(false);
-    }
+    // Client MINCE : on génère un code de salon localement et on va DIRECTEMENT
+    // dans la table /game. Le serveur crée la room `kdoub:CODE` au premier
+    // game:join + remplit les sièges vides avec des bots. Parité belote/web.
+    const CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let code = '';
+    for (let i = 0; i < 6; i++) code += CHARS[Math.floor(Math.random() * CHARS.length)];
+    log.explain(`salon ${code} créé localement → /game/${code}`);
+    router.replace(`/game/${code}`);
   };
 
   const styles = createStyles(palette);

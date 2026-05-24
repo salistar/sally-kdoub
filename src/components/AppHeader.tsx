@@ -33,11 +33,13 @@ interface Props {
   showBack?: boolean;
   subtitle?: string;
   rightSlot?: React.ReactNode;
+  /** Override du bouton retour (ex : confirmation avant de quitter une partie). */
+  onBack?: () => void;
 }
 
 const log = logger.scoped('AppHeader');
 
-export default function AppHeader({ title, showBack = false, subtitle, rightSlot }: Props) {
+export default function AppHeader({ title, showBack = false, subtitle, rightSlot, onBack }: Props) {
   const router = useRouter();
   const { palette, isDark, mode, setMode } = useTheme();
   const { locale, setLocale, isRTL } = useLocale();
@@ -82,7 +84,8 @@ export default function AppHeader({ title, showBack = false, subtitle, rightSlot
               <TouchableOpacity
                 onPress={() => {
                   log.screen('back pressed');
-                  router.back();
+                  if (onBack) onBack();
+                  else router.back();
                 }}
                 style={styles.iconBtn}
                 hitSlop={12}

@@ -61,35 +61,16 @@ export default function JoinRoomScreen() {
       Alert.alert(t('invalidCode'), t('invalidCodeDesc'));
       return;
     }
-    setJoining(true);
-    try {
-      const upperCode = code.trim().toUpperCase();
-      log.bin(`POST /rooms/${upperCode}/join`);
-      const room = await api.joinRoomFull(upperCode);
-      log.bout('200 join', { code: room.code, players: room.playersCount });
-      log.explain(`room ${room.code} rejointe → navigation vers le lobby`);
-      router.replace(`/room/lobby?code=${room.code}`);
-    } catch (e: any) {
-      log.error('join failed', e?.message);
-      Alert.alert(t('error'), e?.message || t('cantJoinRoom'));
-    } finally {
-      setJoining(false);
-    }
+    const upperCode = code.trim().toUpperCase();
+    // Client MINCE : on va DIRECTEMENT dans la table /game (le namespace /game
+    // gère l'appartenance à la room côté serveur, pas de REST join). Parité web.
+    log.explain(`join par code → /game/${upperCode}`);
+    router.replace(`/game/${upperCode}`);
   };
 
   const handleJoinFromList = async (room: api.RoomFull) => {
-    setJoining(true);
-    try {
-      log.bin(`POST /rooms/${room.code}/join (depuis liste)`);
-      const j = await api.joinRoomFull(room.code);
-      log.bout('200 join', { code: j.code });
-      router.replace(`/room/lobby?code=${j.code}`);
-    } catch (e: any) {
-      log.error('join from list failed', e?.message);
-      Alert.alert(t('error'), e?.message || t('cantJoinRoom'));
-    } finally {
-      setJoining(false);
-    }
+    log.explain(`join depuis liste → /game/${room.code}`);
+    router.replace(`/game/${room.code}`);
   };
 
   const styles = createStyles(palette);
