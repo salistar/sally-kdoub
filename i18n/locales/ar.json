@@ -96,7 +96,6 @@
   "dangerZone": "منطقة الخطر",
   "deleteAccount": "حذف الحساب",
   "delete": "حذف",
-
   "appTagline": "خداع · استراتيجية · انتصار",
   "heroWelcomeUser": "مرحبا، {{name}}!",
   "heroWelcomeGuest": "مرحبا!",
@@ -117,7 +116,6 @@
   "statBestStreak": "أفضل سلسلة",
   "matchmakingUnavailable": "البحث عن مباراة غير متاح.",
   "defaultCity": "الدار البيضاء",
-
   "scopeWorld": "العالم",
   "scopeCountry": "البلد",
   "scopeCity": "المدينة",
@@ -125,10 +123,8 @@
   "filterWeekly": "الأسبوع",
   "filterSeason": "الموسم",
   "leaderboardSubtitle": "الموسم · {{scope}}",
-
   "statBest": "الأفضل",
   "statStreak": "السلسلة",
-
   "topPlayers": "أفضل اللاعبين",
   "winsShort": "ف",
   "lossesShort": "خ",
@@ -138,7 +134,6 @@
   "noRecentGames": "لا توجد مباريات أخيرة",
   "vsOpponent": "ضد {{name}}",
   "minShort": "د",
-
   "createRoomTitle": "إنشاء غرفة",
   "joinRoomTitle": "الانضمام إلى غرفة",
   "lobbyTitle": "غرفة الانتظار",
@@ -160,14 +155,12 @@
   "exportPrepared": "سيتم تحضير بياناتك.",
   "deleteWarning": "إجراء دائم.",
   "shopTitle": "المتجر",
-
   "maxPlayersLabel": "أقصى عدد لاعبين",
   "visibilityLabel": "الظهور",
   "public": "عامة",
   "publicDesc": "ظاهرة في القائمة العامة",
   "private": "خاصة",
   "privateDesc": "يمكن الدخول بالرمز فقط",
-
   "confirmPurchase": "تأكيد الشراء",
   "purchaseSuccess": "تم الشراء بنجاح!",
   "purchaseSuccessDesc": "+{{amount}} عملات\nالرصيد الجديد: {{balance}}",
@@ -175,5 +168,11 @@
   "publicRooms": "الغرف العامة",
   "noPublicRooms": "لا توجد غرف عامة حالياً",
   "createOne": "أنشئ واحدة!",
-  "playersWord": "لاعبين"
+  "playersWord": "لاعبين",
+  "diffEasy": "سهل",
+  "diffMedium": "متوسط",
+  "diffHard": "صعب",
+  "drawsShort": "ت",
+  "yourMove": "دورك",
+  "wallet": "المحفظة"
 }

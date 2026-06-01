@@ -81,7 +81,7 @@
   "challengeDesc": "Gana una partida de Kdoub con al menos 3 bluffs exitosos. ¡50 monedas extra!",
   "startChallenge": "Empezar el reto",
   "vsBot": "vs Bot",
-  "localPlay": "Local",
+  "localPlay": "Juego local",
   "light": "Claro",
   "dark": "Oscuro",
   "system": "Sistema",
@@ -96,7 +96,6 @@
   "dangerZone": "Zona de peligro",
   "deleteAccount": "Eliminar cuenta",
   "delete": "Eliminar",
-
   "appTagline": "Bluff · Estrategia · Victoria",
   "heroWelcomeUser": "¡Bienvenido, {{name}}!",
   "heroWelcomeGuest": "¡Bienvenido!",
@@ -117,7 +116,6 @@
   "statBestStreak": "Mejor racha",
   "matchmakingUnavailable": "Emparejamiento no disponible.",
   "defaultCity": "Casablanca",
-
   "scopeWorld": "Mundo",
   "scopeCountry": "País",
   "scopeCity": "Ciudad",
@@ -125,20 +123,17 @@
   "filterWeekly": "Semanal",
   "filterSeason": "Temporada",
   "leaderboardSubtitle": "Temporada · {{scope}}",
-
   "statBest": "Mejor",
   "statStreak": "Racha",
-
   "topPlayers": "Top jugadores",
-  "winsShort": "V",
-  "lossesShort": "D",
+  "winsShort": "G",
+  "lossesShort": "P",
   "walletCoins": "Sally Coins",
   "walletDiamonds": "Diamantes",
   "recentGames": "Partidas recientes",
   "noRecentGames": "Sin partidas recientes",
   "vsOpponent": "vs {{name}}",
   "minShort": "min",
-
   "createRoomTitle": "Crear sala",
   "joinRoomTitle": "Unirse a sala",
   "lobbyTitle": "Sala de espera",
@@ -160,14 +155,12 @@
   "exportPrepared": "Tus datos serán preparados.",
   "deleteWarning": "Acción permanente.",
   "shopTitle": "Tienda",
-
   "maxPlayersLabel": "Número máximo de jugadores",
   "visibilityLabel": "Visibilidad",
   "public": "Pública",
   "publicDesc": "Visible en la lista pública",
   "private": "Privada",
   "privateDesc": "Accesible solo con el código",
-
   "confirmPurchase": "Confirmar compra",
   "purchaseSuccess": "¡Compra exitosa!",
   "purchaseSuccessDesc": "+{{amount}} monedas\nNuevo saldo: {{balance}}",
@@ -175,5 +168,11 @@
   "publicRooms": "SALAS PÚBLICAS",
   "noPublicRooms": "No hay salas públicas",
   "createOne": "¡Crea una!",
-  "playersWord": "jugadores"
+  "playersWord": "jugadores",
+  "diffEasy": "Fácil",
+  "diffMedium": "Medio",
+  "diffHard": "Difícil",
+  "drawsShort": "E",
+  "yourMove": "Tu turno",
+  "wallet": "Cartera"
 }

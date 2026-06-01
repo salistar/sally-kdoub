@@ -96,7 +96,6 @@
   "dangerZone": "منطقة الخطر",
   "deleteAccount": "حذف الحساب",
   "delete": "حذف",
-
   "appTagline": "خدعة · ستراتيجي · انتصار",
   "heroWelcomeUser": "مرحبا، {{name}}!",
   "heroWelcomeGuest": "مرحبا!",
@@ -117,7 +116,6 @@
   "statBestStreak": "أحسن سلسلة",
   "matchmakingUnavailable": "البحث على ماتش ما متوفرش.",
   "defaultCity": "الدار البيضاء",
-
   "scopeWorld": "العالم",
   "scopeCountry": "البلاد",
   "scopeCity": "المدينة",
@@ -125,10 +123,8 @@
   "filterWeekly": "السيمانة",
   "filterSeason": "الموسم",
   "leaderboardSubtitle": "الموسم · {{scope}}",
-
   "statBest": "الأحسن",
   "statStreak": "السلسلة",
-
   "topPlayers": "أحسن اللاعبين",
   "winsShort": "ف",
   "lossesShort": "خ",
@@ -138,7 +134,6 @@
   "noRecentGames": "ما كاينش مباريات أخيرة",
   "vsOpponent": "ضد {{name}}",
   "minShort": "د",
-
   "createRoomTitle": "صنع غرفة",
   "joinRoomTitle": "دخول لغرفة",
   "lobbyTitle": "غرفة الانتظار",
@@ -160,14 +155,12 @@
   "exportPrepared": "غادي نحضرو لك الداتا ديالك.",
   "deleteWarning": "هاد العملية ما كاينش رجوع.",
   "shopTitle": "الحانوت",
-
   "maxPlayersLabel": "أكبر عدد ديال اللاعبين",
   "visibilityLabel": "الظهور",
   "public": "عامة",
   "publicDesc": "كتبان فالليستة العامة",
   "private": "خاصة",
   "privateDesc": "كتدخلها غير بالكود",
-
   "confirmPurchase": "أكد الشراء",
   "purchaseSuccess": "الشراء تم بنجاح!",
   "purchaseSuccessDesc": "+{{amount}} فلوس\nالرصيد الجديد: {{balance}}",
@@ -175,5 +168,11 @@
   "publicRooms": "الغرف العامة",
   "noPublicRooms": "ما كاينش غرف عامة دابا",
   "createOne": "صنع واحدة!",
-  "playersWord": "لاعبين"
+  "playersWord": "لاعبين",
+  "diffEasy": "ساهل",
+  "diffMedium": "متوسط",
+  "diffHard": "صعيب",
+  "drawsShort": "ت",
+  "yourMove": "دورك",
+  "wallet": "البورس"
 }

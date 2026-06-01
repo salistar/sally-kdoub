@@ -81,7 +81,7 @@
   "challengeDesc": "Win a game of Kdoub with at least 3 successful bluffs. 50 bonus coins!",
   "startChallenge": "Start Challenge",
   "vsBot": "vs Bot",
-  "localPlay": "Local",
+  "localPlay": "Local play",
   "light": "Light",
   "dark": "Dark",
   "system": "System",
@@ -96,7 +96,6 @@
   "dangerZone": "Danger Zone",
   "deleteAccount": "Delete Account",
   "delete": "Delete",
-
   "appTagline": "Bluff · Strategy · Victory",
   "heroWelcomeUser": "Welcome, {{name}}!",
   "heroWelcomeGuest": "Welcome!",
@@ -117,7 +116,6 @@
   "statBestStreak": "Best Streak",
   "matchmakingUnavailable": "Matchmaking unavailable.",
   "defaultCity": "Casablanca",
-
   "scopeWorld": "World",
   "scopeCountry": "Country",
   "scopeCity": "City",
@@ -125,10 +123,8 @@
   "filterWeekly": "Weekly",
   "filterSeason": "Season",
   "leaderboardSubtitle": "Season · {{scope}}",
-
   "statBest": "Best",
   "statStreak": "Streak",
-
   "topPlayers": "Top players",
   "winsShort": "W",
   "lossesShort": "L",
@@ -138,7 +134,6 @@
   "noRecentGames": "No recent games",
   "vsOpponent": "vs {{name}}",
   "minShort": "min",
-
   "createRoomTitle": "Create a room",
   "joinRoomTitle": "Join a room",
   "lobbyTitle": "Waiting room",
@@ -160,14 +155,12 @@
   "exportPrepared": "Your data will be prepared.",
   "deleteWarning": "Permanent action.",
   "shopTitle": "Shop",
-
   "maxPlayersLabel": "Max number of players",
   "visibilityLabel": "Visibility",
   "public": "Public",
   "publicDesc": "Visible in the public list",
   "private": "Private",
   "privateDesc": "Accessible only with the code",
-
   "confirmPurchase": "Confirm purchase",
   "purchaseSuccess": "Purchase successful!",
   "purchaseSuccessDesc": "+{{amount}} coins\nNew balance: {{balance}}",
@@ -175,5 +168,11 @@
   "publicRooms": "PUBLIC ROOMS",
   "noPublicRooms": "No public rooms yet",
   "createOne": "Create one!",
-  "playersWord": "players"
+  "playersWord": "players",
+  "diffEasy": "Easy",
+  "diffMedium": "Medium",
+  "diffHard": "Hard",
+  "drawsShort": "D",
+  "yourMove": "Your move",
+  "wallet": "Wallet"
 }
