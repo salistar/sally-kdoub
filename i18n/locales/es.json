@@ -174,5 +174,16 @@
   "diffHard": "Difícil",
   "drawsShort": "E",
   "yourMove": "Tu turno",
-  "wallet": "Cartera"
+  "wallet": "Cartera",
+  "slide3": {
+    "title": "Bots IA"
+  },
+  "solo": {
+    "scoreLabel": "PUNTOS"
+  },
+  "home": {
+    "shortClassicSub": "4×4 / 4×6 / 6×6",
+    "shortTriplets": "Tripletas",
+    "soloBadge": "MEMORIA"
+  }
 }

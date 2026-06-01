@@ -174,5 +174,16 @@
   "diffHard": "صعب",
   "drawsShort": "ت",
   "yourMove": "دورك",
-  "wallet": "المحفظة"
+  "wallet": "المحفظة",
+  "slide3": {
+    "title": "ذكاء صناعي"
+  },
+  "solo": {
+    "scoreLabel": "النتيجة"
+  },
+  "home": {
+    "shortClassicSub": "4×4 / 4×6 / 6×6",
+    "shortTriplets": "ثلاثيات",
+    "soloBadge": "ذاكرة"
+  }
 }

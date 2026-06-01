@@ -174,5 +174,16 @@
   "diffHard": "Hard",
   "drawsShort": "D",
   "yourMove": "Your move",
-  "wallet": "Wallet"
+  "wallet": "Wallet",
+  "slide3": {
+    "title": "AI Bots"
+  },
+  "solo": {
+    "scoreLabel": "SCORE"
+  },
+  "home": {
+    "shortClassicSub": "4x4 / 4x6 / 6x6",
+    "shortTriplets": "Triplets",
+    "soloBadge": "MEMORY"
+  }
 }

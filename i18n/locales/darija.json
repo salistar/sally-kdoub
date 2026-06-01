@@ -174,5 +174,16 @@
   "diffHard": "صعيب",
   "drawsShort": "ت",
   "yourMove": "دورك",
-  "wallet": "البورس"
+  "wallet": "البورس",
+  "slide3": {
+    "title": "روبوهات ذكية"
+  },
+  "solo": {
+    "scoreLabel": "النقط"
+  },
+  "home": {
+    "shortClassicSub": "4×4 / 4×6 / 6×6",
+    "shortTriplets": "ثلاثيات",
+    "soloBadge": "ذاكرة"
+  }
 }

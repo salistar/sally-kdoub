@@ -96,7 +96,6 @@
   "dangerZone": "Zone dangereuse",
   "deleteAccount": "Supprimer le compte",
   "delete": "Supprimer",
-
   "appTagline": "Bluff · Stratégie · Victoire",
   "heroWelcomeUser": "Bienvenue, {{name}} !",
   "heroWelcomeGuest": "Bienvenue !",
@@ -117,7 +116,6 @@
   "statBestStreak": "Meilleure série",
   "matchmakingUnavailable": "Matchmaking indisponible.",
   "defaultCity": "Casablanca",
-
   "scopeWorld": "Monde",
   "scopeCountry": "Pays",
   "scopeCity": "Ville",
@@ -125,10 +123,8 @@
   "filterWeekly": "Semaine",
   "filterSeason": "Saison",
   "leaderboardSubtitle": "Saison · {{scope}}",
-
   "statBest": "Record",
   "statStreak": "Série",
-
   "topPlayers": "Top joueurs",
   "winsShort": "V",
   "lossesShort": "D",
@@ -138,7 +134,6 @@
   "noRecentGames": "Aucune partie récente",
   "vsOpponent": "vs {{name}}",
   "minShort": "min",
-
   "createRoomTitle": "Créer un salon",
   "joinRoomTitle": "Rejoindre un salon",
   "lobbyTitle": "Salon d'attente",
@@ -160,14 +155,12 @@
   "exportPrepared": "Vos données seront préparées.",
   "deleteWarning": "Action permanente.",
   "shopTitle": "Boutique",
-
   "maxPlayersLabel": "Nombre de joueurs max",
   "visibilityLabel": "Visibilité",
   "public": "Publique",
   "publicDesc": "Visible dans la liste publique",
   "private": "Privée",
   "privateDesc": "Accessible seulement par code",
-
   "confirmPurchase": "Confirmer l'achat",
   "purchaseSuccess": "Achat réussi !",
   "purchaseSuccessDesc": "+{{amount}} pièces\nNouveau solde : {{balance}}",
@@ -175,5 +168,22 @@
   "publicRooms": "SALONS PUBLICS",
   "noPublicRooms": "Aucun salon public pour le moment",
   "createOne": "Créez-en un !",
-  "playersWord": "joueurs"
+  "playersWord": "joueurs",
+  "diffEasy": "Facile",
+  "diffMedium": "Moyen",
+  "diffHard": "Difficile",
+  "drawsShort": "N",
+  "slide3": {
+    "title": "Bots IA"
+  },
+  "solo": {
+    "scoreLabel": "SCORE"
+  },
+  "wallet": "Portefeuille",
+  "yourMove": "À ton tour",
+  "home": {
+    "shortClassicSub": "4×4 / 4×6 / 6×6",
+    "shortTriplets": "Triplets",
+    "soloBadge": "MEMORY"
+  }
 }
