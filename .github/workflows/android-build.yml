@@ -53,7 +53,19 @@ jobs:
           CI: '1'
         run: npx expo prebuild --platform android --clean
 
+      - name: Stage .env from .env.production (so EXPO_PUBLIC_* are inlined)
+        run: |
+          if [ -f .env.production ]; then
+            cp .env.production .env
+            echo "Staged .env from .env.production (keys only):"
+            grep -v '^#' .env | grep -v '^$' | sed 's/=.*/=***/'
+          else
+            echo "WARNING: no .env.production present; EXPO_PUBLIC_* may be empty"
+          fi
+
       - name: Bundle JS (embedded, no Metro)
+        env:
+          NODE_ENV: production
         run: |
           npx expo export:embed \
             --platform android \
