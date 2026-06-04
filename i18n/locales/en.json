@@ -185,5 +185,6 @@
     "shortClassicSub": "4x4 / 4x6 / 6x6",
     "shortTriplets": "Triplets",
     "soloBadge": "MEMORY"
-  }
+  },
+  "guestDisplayName": "Guest"
 }

@@ -4,8 +4,8 @@
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "build:dev": "eas build --profile development --platform all",
     "build:preview": "eas build --profile preview --platform all",
@@ -53,7 +53,11 @@
     "react-native-webrtc": "^124.0.7",
     "react-native-webview": "13.12.5",
     "socket.io-client": "^4.7.0",
-    "zustand": "^4.5.5"
+    "zustand": "^4.5.5",
+    "@react-native-google-signin/google-signin": "^13.1.0",
+    "expo-av": "~15.0.2",
+    "react-native-purchases": "^8.0.0",
+    "expo-apple-authentication": "~7.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.0",
@@ -65,5 +69,6 @@
   },
   "overrides": {
     "ajv": "^8.17.0"
-  }
+  },
+  "name": "sally-kdoub"
 }

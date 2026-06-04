@@ -27,7 +27,7 @@ import { APP_CONFIG } from '../../src/config/app.config';
 
 const APP_COLOR = APP_CONFIG.primary;
 const APP_NAME = APP_CONFIG.name;
-const CARD_IMAGE = require('../../assets/cards/12O.png');
+const CARD_IMAGE = require('../../assets/card-hero.png');
 
 export default function LoginScreen() {
   const { t } = useTranslation();

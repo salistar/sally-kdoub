@@ -85,9 +85,7 @@ export default function WelcomeScreen() {
 
   const SLIDES = [
     { key: 'logo',   useCard: true },
-    { key: 'slide2', titleKey: 'slide2.title', descKey: 'slide2.desc' },
     { key: 'slide3', titleKey: 'slide3.title', descKey: 'slide3.desc' },
-    { key: 'slide4', titleKey: 'slide4.title', descKey: 'slide4.desc' },
   ];
 
   const handleSelectLanguage = (code: LocaleCode) => {

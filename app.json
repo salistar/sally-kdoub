@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "SallyCards Kdoub",
+    "name": "Sally Kdoub",
     "slug": "sallycards-kdoub",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -48,7 +48,7 @@
         }
       ]
     ],
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "extra": {
       "eas": {
         "projectId": "sallycards-kdoub"
